@@ -32,6 +32,9 @@ setup(name='gs.email',
     zip_safe=True,
     install_requires=[
         'setuptools',
+        'gs.config',
+        'zope.component',
+        'zope.sendmail',
         # -*- Extra requirements: -*-
     ],
     entry_points="""
