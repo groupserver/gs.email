@@ -13,7 +13,7 @@ Troubleshooting_ section below.
 From the code, the `send_email`_ function is used by most of the
 GroupServer system to send the messages. Depending on the options, those
 email messages may be sent using the XVERP mailer_ that is also defined
-in this product.
+in this product [#xverp]_.
 
 Configuration
 =============
@@ -67,7 +67,8 @@ Options
   testing).
 
 ``xverp`` (optional):
-  If ``True`` then XVERP will be used to send the email messages.
+  If ``True`` then XVERP will be used when the email messages are sent
+  [#xverp]_.
 
 .. _configuration examples:
 
@@ -77,17 +78,27 @@ Examples
 Setting up delivery to the local SMTP server, from the GroupServer instance
 called ``main``::
 
-  [smtp-main]
+  [config-main]
+  smtp = local
+
+  [smtp-local]
   hostname = localhost
   port = 25
   no_tls = True
   queuepath = /tmp/main-mail-queue
   xverp = True
 
+:Note: There will be more than the ``smtp`` option for the configuration of
+       the ``main`` GroupServer instance. However, the other options have
+       been left out for clarity.
+
 Setting up delivery to a remote SMTP server, from the GroupServer instance
 called ``production``::
 
-  [smtp-production]
+  [config-production]
+  smtp = remote
+
+  [smtp-remote]
   hostname = remote.host.name
   port = 2525
   username = user_on_the_remote_server
@@ -97,9 +108,13 @@ called ``production``::
   processorthread = True
   xverp = True
 
-Setting up a Test system to not send out email::
+Setting up a test system to not send out email:: 
 
-  [smtp-test]
+
+  [config-test]
+  smtp = none
+
+  [smtp-none]
   hostname = localhost
   port = 25
   queuepath = /tmp/test-mail-queue
@@ -122,7 +137,7 @@ Synopsis
 
 ::
 
-   send_email(sender, recipients, email, xverp=False)
+   send_email(sender, recipients, email)
 
 Arguments
 ---------
@@ -136,16 +151,12 @@ Arguments
 ``recipients``:
   The address of the person who should receive the email message, a *list*
   of recipients, or a *tuple* containing the addresses of the
-  recipients. This will become the ``To`` address on the *envelope,* and is
+  recipients. This will become the ``To`` address on the *envelope;* it is
   separate from the To, CC, and BCC addresses in the email message.
 
 ``email``:
   The email message. It needs to be a complete message with the headers and
   the body.
-
-``xverp``
-  If set to ``True`` then XVERP information will be sent with the email
-  message [#xverp]_.
 
 Returns
 -------
@@ -177,14 +188,14 @@ the email message to Postfix [#xverp]_.
 The ``XVERPSMTPMailer`` is loaded when the `configuration`_ option
 ``xverp`` is set to ``True``.
 
-.. [#config] Configuration is handled by the ``gs.email.config`` module.
-   It uses the ``gs.config`` module to read the configuration information.
 .. [#receiving] *Receiving* email is supported by the
    ``gs.group.messages.add.base`` product and the
    ``gs.group.messages.add.smtp2gs`` product. *Displaying* the messages is
    handled by the other ``gs.group.messages`` products.
 .. [#xverp] For more information about XVERP see `The Postfix VERP Howto
    <http://www.postfix.org/VERP_README.html>`_.
+.. [#config] Configuration is handled by the ``gs.email.config`` module.
+   It uses the ``gs.config`` module to read the configuration information.
 .. [#addr-spec] Technically it is the ``addr-spec`` portion of the email
    address, as defined by `RFC 5322 <http://tools.ietf.org/html/rfc5322>`_.
 .. [#email] See <http://docs.python.org/library/email.html>.
