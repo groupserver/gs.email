@@ -19,10 +19,10 @@ def send_email(sender, recipients, email):
         if (max_batch == 0) or (max_batch > len(recipients)):
             batch = len(recipients)
         else:
-            batch = batchsize
+            batch = max_batch
         
         mailer.send(sender, recipients[0:batch], email)
         log.info("Sent email of length: %s to %s (batchsize: %s) from %s" %
-                           (len(email), recipients[0:batch], batch, sender))
+                    (len(email), recipients[0:batch], batch, sender))
         
         recipients = recipients[batch:]
