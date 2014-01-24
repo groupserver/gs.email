@@ -48,7 +48,6 @@ setup(name='gs.email',
         'gs.config',
         'zope.component',
         'zope.sendmail',
-        # -*- Extra requirements: -*-
     ],
     entry_points="""
     # -*- Entry points: -*-
