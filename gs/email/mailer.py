@@ -1,5 +1,21 @@
-# coding=utf-8
-from zope.sendmail.mailer import *
+# -*- coding: utf-8 -*-
+##############################################################################
+#
+# Copyright © 2014 OnlineGroups.net and Contributors.
+# All Rights Reserved.
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE.
+#
+##############################################################################
+from __future__ import absolute_import
+import socket
+from zope.sendmail.mailer import SMTPMailer, have_ssl
+
 
 class XVERPSMTPMailer(SMTPMailer):
     def send(self, fromaddr, toaddrs, message):
@@ -18,7 +34,7 @@ class XVERPSMTPMailer(SMTPMailer):
                                    '(code=%s, response=%s)' % (code, response))
 
         # encryption support
-        have_tls =  connection.has_extn('starttls')
+        have_tls = connection.has_extn('starttls')
         if not have_tls and self.force_tls:
             raise RuntimeError('TLS is not available but TLS is required')
 
