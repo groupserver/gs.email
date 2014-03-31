@@ -13,8 +13,8 @@
 #
 ##############################################################################
 from __future__ import absolute_import
-import logging
-log = logging.getLogger('gs.email')
+from logging import getLogger
+log = getLogger('gs.email')
 from zope.sendmail.interfaces import IMailDelivery
 from zope.component import getUtility
 from .config import create_emailUtilities
