@@ -13,12 +13,11 @@
 #
 ##############################################################################
 from __future__ import absolute_import
+import logging
+log = logging.getLogger('gs.email')
 from zope.sendmail.interfaces import IMailDelivery
 from zope.component import getUtility
 from .config import create_emailUtilities
-
-import logging
-log = logging.getLogger('gs.email')
 
 max_batch = 50
 
@@ -39,8 +38,15 @@ def send_email(sender, recipients, email):
         else:
             batch = max_batch
 
-        mailer.send(sender, recipients[0:batch], email)
-        log.info("Sent email of length: %s to %s (batchsize: %s) from %s" %
-                    (len(email), recipients[0:batch], batch, sender))
+        try:
+            mailer.send(sender, recipients[0:batch], email)
+        except TypeError as te:
+            m = 'Issue sending email of length {0} from {3} to {1}:\n{2}'
+            msg = m.format(len(email), recipients[0:batch], te, sender)
+            log.error(msg)
+        else:
+            m = "Sent email of length {0} from {3} to {1} (batchsize: {2})"
+            msg = m.format(len(email), recipients[0:batch], batch, sender)
+            log.info(msg)
 
         recipients = recipients[batch:]
