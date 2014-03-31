@@ -26,9 +26,11 @@ max_batch = 50
 def send_email(sender, recipients, email):
     if not (isinstance(recipients, list) or isinstance(recipients, tuple)):
         recipients = [recipients]
-
+    # TODO: sort
+    # --=mpj17-- Consider the wisdom of sorting the list of recipients
+    # recipients.sort(key=lambda x: x[::-1])
+    # This will put all the addresses to the same *host* closer together.
     create_emailUtilities()
-
     mailer = getUtility(IMailDelivery, 'gs.maildelivery')
 
     while recipients:
