@@ -1,6 +1,6 @@
-==============
-``site.email``
-==============
+============
+``gs.email``
+============
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Sending email from GroupServer
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -99,7 +99,7 @@ Examples
 Setting up delivery to the local SMTP server, from the
 GroupServer instance called ``main``:
 
-.. code-block: INI
+.. code-block:: INI
 
   [config-main]
   smtp = local
@@ -119,7 +119,7 @@ GroupServer instance called ``main``:
 Setting up delivery to a remote SMTP server, from the GroupServer
 instance called ``production``:
 
-.. code-block: INI
+.. code-block:: INI
 
   [config-production]
   smtp = remote
@@ -136,7 +136,7 @@ instance called ``production``:
 
 Setting up a test system to not send out email::
 
-.. code-block: INI
+.. code-block:: INI
 
   [config-test]
   smtp = none
@@ -198,7 +198,7 @@ Examples
 Send an email from the support-address of the site to all the
 addresses of a GroupServer user:
 
-.. code-block: python
+.. code-block:: python
 
   eu = gs.profile.email.base.EmailUser(context, userInfo)
   send_email(siteInfo.get_support_email(), eu.get_addresses(), emailMessage)
