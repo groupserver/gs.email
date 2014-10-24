@@ -1,34 +1,52 @@
+==============
+``site.email``
+==============
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Sending email from GroupServer
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+:Author: `Michael JasonSmith`_
+:Contact: Michael JasonSmith <mpj17@onlinegroups.net>
+:Date: 2014-10-24
+:Organization: `GroupServer.org`_
+:Copyright: This document is licensed under a
+  `Creative Commons Attribution-Share Alike 4.0 International License`_
+  by `OnlineGroups.net`_.
+
 Introduction
 ============
 
-This is the core product for *sending* email from GroupServer_ via SMTP
-[#receiving]_. It is used by the groups (``Products.XWFMailingListManager``) 
-to send email to the group members, and the user-profile system 
-(``gs.profile.notify``) to send notifications.
+This is the core product for *sending* email from GroupServer_
+via SMTP [#receiving]_. It is used by the groups
+(``Products.XWFMailingListManager``) to send email to the group
+members, and the user-profile system (``gs.profile.notify``) to
+send notifications.
 
 The configuration_ for sending email is done through the standard
-configuration system. Known solutions to problems are discussed in the
-Troubleshooting_ section below.
+configuration system. Known solutions to problems are discussed
+in the Troubleshooting_ section below.
 
 From the code, the `send_email`_ function is used by most of the
-GroupServer system to send the messages. Depending on the options, those
-email messages may be sent using the XVERP mailer_ that is also defined
-in this product [#xverp]_.
+GroupServer system to send the messages. Depending on the
+options, those email messages may be sent using the XVERP mailer_
+that is also defined in this product [#xverp]_.
 
 Configuration
 =============
 
-The configuration options_ sets up how the mailer_ connects to the SMTP
-server [#config]_. Delivery of email messages can be can be to a local
-server, a remote server, or turned off entirely as shown in the
-`configuration examples`_ below.
+The configuration for sending email is controlled by the
+``gsconfig.ini`` file. The configuration options_ set up how the
+mailer_ connects to the SMTP server [#config]_. Delivery of email
+messages can be can be to a local server, a remote server, or
+turned off entirely as shown in the `configuration examples`_
+below.
 
 Options
 -------
 
 ``hostname`` (required):
-  The name of the SMTP server (``localhost`` if the SMTP server is running
-  on the same machine as GroupServer).
+  The name of the SMTP server (``localhost`` if the SMTP server
+  is running on the same machine as GroupServer).
 
 ``port`` (required):
   The port that the SMTP server runs on (usually ``25``).
@@ -38,45 +56,50 @@ Options
   message. (Defaults to ``None``.)
 
 ``password`` (optional):
-  The password used to log into the SMTP server. (Defaults to ``None``.)
+  The password used to log into the SMTP server. (Defaults to
+  ``None``.)
 
 ``no_tls`` and ``force_tls`` (both optional):
-  Transport Layer Security (TLS) is the replacement to the Secure Sockets
-  Layer (SSL). It can be used to encrypt the communication between
-  GroupServer and the SMTP server. Normally the `mailer`_ will use TLS if
-  it is available.
+  Transport Layer Security (TLS) is the replacement to the Secure
+  Sockets Layer (SSL). It can be used to encrypt the
+  communication between GroupServer and the SMTP server. Normally
+  the `mailer`_ will use TLS if it is available.
 
-  Setting the ``no_tls`` option to ``False`` will force the GroupServer to
-  connect to the SMTP server *en clear*, even if encryption is
-  available. This may be useful if the SMTP server only accepts connections
-  from ``localhost`` and it is running on the same machine as GroupServer.
+  Setting the ``no_tls`` option to ``False`` will force the
+  GroupServer to connect to the SMTP server *en clear*, even if
+  encryption is available. This may be useful if the SMTP server
+  only accepts connections from ``localhost`` and it is running
+  on the same machine as GroupServer.
 
   Setting the ``force_tls`` to ``True`` forces GroupServer to use
-  encryption to connect to the SMTP server. If TLS is not available then a
-  ``RuntimeError`` is raised.
+  encryption to connect to the SMTP server. If TLS is not
+  available then a ``RuntimeError`` is raised.
 
 ``queuepath`` (optional):
-  The path to the ``Maildir`` folder that stores all the messages before
-  processing by the SMTP server. Defaults to ``/tmp/mailqueue``.
+  The path to the ``Maildir`` folder that stores all the messages
+  before processing by the SMTP server. Defaults to
+  ``/tmp/mailqueue``.
 
 ``processorthread`` (optional):
-  If ``True`` (the default) then a separate thread will be started to
-  handle the queue and pass the email messages on to the SMTP server. If
-  ``False`` the email messages will just be written to the file in
-  ``queuepath`` and not be processed (which is **very** useful for
-  testing).
+  If ``True`` (the default) then a separate thread will be
+  started to handle the queue and pass the email messages on to
+  the SMTP server. If ``False`` the email messages will just be
+  written to the file in ``queuepath`` and not be processed
+  (which is **very** useful for testing).
 
 ``xverp`` (optional):
-  If ``True`` then XVERP will be used when the email messages are sent
-  [#xverp]_.
+  If ``True`` then XVERP will be used when the email messages are
+  sent [#xverp]_.
 
 .. _configuration examples:
 
 Examples
 --------
 
-Setting up delivery to the local SMTP server, from the GroupServer instance
-called ``main``::
+Setting up delivery to the local SMTP server, from the
+GroupServer instance called ``main``:
+
+.. code-block: INI
 
   [config-main]
   smtp = local
@@ -88,12 +111,15 @@ called ``main``::
   queuepath = /tmp/main-mail-queue
   xverp = True
 
-:Note: There will be more than the ``smtp`` option for the configuration of
-       the ``main`` GroupServer instance. However, the other options have
-       been left out for clarity.
+:Note: There will be more than the ``smtp`` option for the
+       configuration of the ``main`` GroupServer
+       instance. However, the other options have been left out
+       for clarity.
 
-Setting up delivery to a remote SMTP server, from the GroupServer instance
-called ``production``::
+Setting up delivery to a remote SMTP server, from the GroupServer
+instance called ``production``:
+
+.. code-block: INI
 
   [config-production]
   smtp = remote
@@ -108,8 +134,9 @@ called ``production``::
   processorthread = True
   xverp = True
 
-Setting up a test system to not send out email:: 
+Setting up a test system to not send out email::
 
+.. code-block: INI
 
   [config-test]
   smtp = none
@@ -123,9 +150,10 @@ Setting up a test system to not send out email::
 Troubleshooting
 ===============
 
-Mail is trapped in ``queuedir/new``: look to see if ``.sending_*`` or
-``.rejected_*`` files have been created in the same directory. If so,
-delete them and the mail should be processed.
+Mail is trapped in ``queuedir/new``: look to see if
+``.sending_*`` or ``.rejected_*`` files have been created in the
+same directory. If so, delete them and the mail should be
+processed.
 
 ``send_email``
 ==============
@@ -143,20 +171,21 @@ Arguments
 ---------
 
 ``sender``: 
-  The address [#addr-spec]_ of the person, or group, that is responsible
-  for sending the email message. This will become the ``From`` address on
-  the *envelope;* it is separate from the From, Sender, and Reply-to
-  addresses in the email message.
+  The address [#addr-spec]_ of the person, or group, that is
+  responsible for sending the email message. This will become the
+  ``From`` address on the *envelope;* it is separate from the
+  From, Sender, and Reply-to addresses in the email message.
 
 ``recipients``:
-  The address of the person who should receive the email message, a *list*
-  of recipients, or a *tuple* containing the addresses of the
-  recipients. This will become the ``To`` address on the *envelope;* it is
-  separate from the To, CC, and BCC addresses in the email message.
+  The address of the person who should receive the email message,
+  a *list* of recipients, or a *tuple* containing the addresses
+  of the recipients. This will become the ``To`` address on the
+  *envelope;* it is separate from the To, CC, and BCC addresses
+  in the email message.
 
 ``email``:
-  The email message. It needs to be a complete message with the headers and
-  the body.
+  The email message. It needs to be a complete message with the
+  headers and the body.
 
 Returns
 -------
@@ -166,27 +195,37 @@ Returns
 Examples
 --------
 
-Send an email from the support-address of the site to all the addresses of
-a GroupServer user::
+Send an email from the support-address of the site to all the
+addresses of a GroupServer user:
+
+.. code-block: python
 
   eu = gs.profile.email.base.EmailUser(context, userInfo)
   send_email(siteInfo.get_support_email(), eu.get_addresses(), emailMessage)
 
-The ``gs.profile.notify.NotifyUser`` class demonstrates how to send an
-email message. The ``gs.profile.notify.MessageSender`` demonstrates how an
-email message is constructed using the standard Python ``email`` module
-[#email]_.
+The ``gs.profile.notify.NotifyUser`` class demonstrates how to
+send an email message. The ``gs.profile.notify.MessageSender``
+demonstrates how an email message is constructed using the
+standard Python ``email`` module [#email]_.
 
 Mailer
 ======
 
 The mailer ``gs.email.mailer.XVERPSMTPMailer`` is a subclass of
-``zope.sendmail.mailer.SMTPMailer``. It differs in the implementation of
-the ``send`` method, which turns on the ``XVERP`` mail-option when it sends
-the email message to Postfix [#xverp]_. 
+``zope.sendmail.mailer.SMTPMailer``. It differs in the
+implementation of the ``send`` method, which turns on the
+``XVERP`` mail-option when it sends the email message to Postfix
+[#xverp]_.
 
-The ``XVERPSMTPMailer`` is loaded when the `configuration`_ option
-``xverp`` is set to ``True``.
+The ``XVERPSMTPMailer`` is loaded when the `configuration`_
+option ``xverp`` is set to ``True``.
+
+Resources
+=========
+
+- Code repository: https://github.com/groupserver/gs.email/
+- Questions and comments to http://groupserver.org/groups/development/
+- Report bugs at https://redmine.iopen.net/projects/groupserver/
 
 .. [#receiving] *Receiving* email is supported by the
    ``gs.group.messages.add.base`` product and the
@@ -199,6 +238,11 @@ The ``XVERPSMTPMailer`` is loaded when the `configuration`_ option
 .. [#addr-spec] Technically it is the ``addr-spec`` portion of the email
    address, as defined by `RFC 5322 <http://tools.ietf.org/html/rfc5322>`_.
 .. [#email] See <http://docs.python.org/library/email.html>.
+..  _Creative Commons Attribution-Share Alike 4.0 International License:
+    http://creativecommons.org/licenses/by-sa/4.0/
+.. _GroupServer.org: http://groupserver.org/
+.. _Michael JasonSmith: http://groupserver.org/p/mpj17
+.. _onlinegroups.net: https://onlinegroups.net/
 .. _GroupServer: http://groupserver.org/
 
 ..  LocalWords:  TLS SMTP XVERP BCC
