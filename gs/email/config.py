@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-##############################################################################
+############################################################################
 #
-# Copyright © 2014 OnlineGroups.net and Contributors.
+# Copyright © 2014, 2015 OnlineGroups.net and Contributors.
 # All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
@@ -11,7 +11,7 @@
 # WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 # FOR A PARTICULAR PURPOSE.
 #
-##############################################################################
+############################################################################
 from __future__ import absolute_import
 from zope.component import getUtility, queryUtility
 from zope.component import getGlobalSiteManager
@@ -37,7 +37,7 @@ def create_emailUtilities(instance_id=None):
                                'no_tls': bool_, 'force_tls': bool_,
                                'queuepath': str, 'processorthread': bool_,
                                'xverp': bool_})
-    smtpconfig = config.get('smtp')
+    smtpconfig = config.get('smtp', strict=False)
     name = ''
     for key in ('hostname', 'port', 'username', 'password', 'no_tls',
                 'force_tls'):
@@ -50,14 +50,15 @@ def create_emailUtilities(instance_id=None):
         else:
             Mailer = SMTPMailer
 
-        gsm.registerUtility(Mailer(
-                                 hostname=smtpconfig.get('hostname', None),
-                                 port=smtpconfig.get('port', None),
-                                 username=smtpconfig.get('username', None),
-                                 password=smtpconfig.get('password', None),
-                                 no_tls=smtpconfig.get('no_tls', None),
-                                 force_tls=smtpconfig.get('force_tls', None)),
-                            IMailer, name='gs.mailer.%s' % name)
+        gsm.registerUtility(
+            Mailer(
+                hostname=smtpconfig.get('hostname', None),
+                port=smtpconfig.get('port', None),
+                username=smtpconfig.get('username', None),
+                password=smtpconfig.get('password', None),
+                no_tls=smtpconfig.get('no_tls', None),
+                force_tls=smtpconfig.get('force_tls', None)),
+            IMailer, name='gs.mailer.%s' % name)
     queuePath = smtpconfig.get('queuepath', '/tmp/mailqueue')
     if not queryUtility(IMailDelivery, name='gs.maildelivery'):
         delivery = QueuedMailDelivery(queuePath)
