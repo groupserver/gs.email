@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-##############################################################################
+############################################################################
 #
 # Copyright © 2014 OnlineGroups.net and Contributors.
 # All Rights Reserved.
@@ -11,7 +11,7 @@
 # WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 # FOR A PARTICULAR PURPOSE.
 #
-##############################################################################
+############################################################################
 from __future__ import absolute_import
 import socket
 from zope.sendmail.mailer import SMTPMailer, have_ssl
@@ -30,8 +30,9 @@ class XVERPSMTPMailer(SMTPMailer):
         if code < 200 or code >= 300:
             code, response = connection.helo()
             if code < 200 or code >= 300:
-                raise RuntimeError('Error sending HELO to the SMTP server '
-                                   '(code=%s, response=%s)' % (code, response))
+                m = 'Error sending HELO to the SMTP server '\
+                    '(code=%s, response=%s)' % (code, response)
+                raise RuntimeError(m)
 
         # encryption support
         have_tls = connection.has_extn('starttls')
@@ -51,10 +52,12 @@ class XVERPSMTPMailer(SMTPMailer):
                     password = password.encode('utf-8')
                 connection.login(username, password)
         elif self.username:
-            raise RuntimeError('Mailhost does not support ESMTP but a username '
-                                'is configured')
+            m = 'Mailhost does not support ESMTP but a username is '\
+                'configured'
+            raise RuntimeError(m)
 
-        connection.sendmail(fromaddr, toaddrs, message, mail_options=["XVERP"])
+        connection.sendmail(fromaddr, toaddrs, message,
+                            mail_options=["XVERP"])
         try:
             connection.quit()
         except socket.sslerror:
