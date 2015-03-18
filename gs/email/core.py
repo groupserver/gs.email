@@ -18,7 +18,7 @@ log = getLogger('gs.email')
 from zope.sendmail.interfaces import IMailDelivery
 from zope.component import getUtility
 from .config import create_emailUtilities
-
+# FIXME: config
 max_batch = 50
 
 
