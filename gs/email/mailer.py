@@ -25,11 +25,13 @@ class XVERPSMTPMailer(SMTPMailer):
 :param str fromaddr: The envelope-from.
 :param list toaddrs: The envelope-to addresses.
 :param str message: The email message to send.
+:returns: ``None``
 
-This is effectively the same as the
-:meth:`zope.sendmail.mailer.SMTPMailer.send` method, only we also use the
-``mail_options`` to pass ``XVERP`` to the SMTP server. TLS is used where
-possible.
+:meth:`send` will send a message to the SMTP server, requesting that XVERP
+is used. This is effectively the same as the
+:meth:`zope.sendmail.mailer.SMTPMailer.send` method, except
+``mail_options`` is used to pass ``XVERP`` to the SMTP server. TLS is used
+where possible.
 """
         connection = self.smtp(self.hostname, str(self.port))
 

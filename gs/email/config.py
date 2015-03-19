@@ -28,6 +28,31 @@ log = logging.getLogger('gs.email')
 
 
 def create_emailUtilities(instance_id=None):
+    '''Create the utilities to send the email messages
+
+:param str instance_id: The indentifier for the GroupServer instance
+:returns: ``None``
+
+The :func:`create_emailUtilities` function loads the ``smtp`` section of the
+configuration of the instance specified by ``instance_id``. If no instance
+is specified then :func:`gs.config.getInstanceId` is used to determine the
+current instance. It then loads the following configuration options:
+
+* ``hostname``
+* ``port``
+* ``username``
+* ``password``
+* ``no_tls``
+* ``force_tls``
+* ``queuepath``
+* ``processorthread``
+* ``xverp``
+
+If the XVERP option is ``True`` then
+:class:`gs.email.mailer.XVERPSMTPMailer` is registered as the utility used
+to connect to the SMTP host; otherwise
+:class:`zope.sendmail.mailer.SMTPMailer` is used. In either case the mailer
+is configured with the options in the config file.'''
     if not instance_id:
         instance_id = getInstanceId()
 
