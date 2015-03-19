@@ -19,10 +19,34 @@ from zope.sendmail.interfaces import IMailDelivery
 from zope.component import getUtility
 from .config import create_emailUtilities
 # FIXME: config
-max_batch = 50
+#: The maximum number of email addresses in a batch
+MAX_BATCH = 50
 
 
 def send_email(sender, recipients, email):
+    '''Send an email message to some recipients
+
+:param str sender: The address of the person, or group, that is
+                   responsible for sending the email message. This will
+                   become the from-address on the *envelope;* it is
+                   separate from the :mailheader:`From`,
+                   :mailheader:`Sender`, and :mailheader:`Reply-to`
+                   addresses in the email message.
+:param recipients: The address of the person who should receive the email
+                   message, a ``list`` of recipients, or a ``tuple``
+                   containing the addresses of the recipients. This will
+                   become the  to-address on the  *envelope;* it is separate
+                   from the To, CC, and BCC addresses in the email message.
+:type recipients: ``str``, ``tuple``, or ``list``.
+:param str email: The email message, as a string. It needs to be a complete
+                  message with headers and a body.
+:returns: ``None``.
+
+The :func:`send_email` function uses SMTP to send an  :param:`email` message
+to the :param:`recipients` in *batches*. The batching is necessary to
+prevent overwhelming the SMTP server (it makes management of the mail queue
+easier).
+'''
     if not (isinstance(recipients, list) or isinstance(recipients, tuple)):
         recipients = [recipients]
     # TODO: sort
@@ -33,10 +57,10 @@ def send_email(sender, recipients, email):
     mailer = getUtility(IMailDelivery, 'gs.maildelivery')
 
     while recipients:
-        if (max_batch == 0) or (max_batch > len(recipients)):
+        if (MAX_BATCH == 0) or (MAX_BATCH > len(recipients)):
             batch = len(recipients)
         else:
-            batch = max_batch
+            batch = MAX_BATCH
 
         try:
             mailer.send(sender, recipients[0:batch], email)

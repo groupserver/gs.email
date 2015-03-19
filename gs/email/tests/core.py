@@ -53,10 +53,10 @@ class TestCore(TestCase):
     @patch('gs.email.core.create_emailUtilities')
     def test_batch(self, ceuMock, getUtilityMock):
         'Do we batch the requests'
-        gs.email.core.max_batch = 2
+        gs.email.core.MAX_BATCH = 2
         mailerMock = getUtilityMock()
         send_email(self.sender, self.addrs, self.email)
         calls = [call(self.sender, self.addrs[:2], self.email),
                  call(self.sender, self.addrs[2:], self.email), ]
         mailerMock.send.has_calls(calls)
-        gs.email.core.max_batch = 50
+        gs.email.core.MAX_BATCH = 50
