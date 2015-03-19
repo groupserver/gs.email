@@ -18,11 +18,19 @@ from zope.sendmail.mailer import SMTPMailer, have_ssl
 
 
 class XVERPSMTPMailer(SMTPMailer):
+    '''Sending messages to an SMTP server using TLS and XVERP'''
     def send(self, fromaddr, toaddrs, message):
-        """ This is effectively the same method as in SMTPMailer, only
-            we also want to support mail_options to pass XVERP.
+        """Send a message
 
-        """
+:param str fromaddr: The envelope-from.
+:param list toaddrs: The envelope-to addresses.
+:param str message: The email message to send.
+
+This is effectively the same as the
+:meth:`zope.sendmail.mailer.SMTPMailer.send` method, only we also use the
+``mail_options`` to pass ``XVERP`` to the SMTP server. TLS is used where
+possible.
+"""
         connection = self.smtp(self.hostname, str(self.port))
 
         # send EHLO

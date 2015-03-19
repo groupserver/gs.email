@@ -19,7 +19,7 @@ from zope.sendmail.interfaces import IMailDelivery
 from zope.component import getUtility
 from .config import create_emailUtilities
 # FIXME: config
-#: The maximum number of email addresses in a batch
+#: The maximum number of email recipients in a batch.
 MAX_BATCH = 50
 
 
@@ -37,16 +37,16 @@ def send_email(sender, recipients, email):
                    containing the addresses of the recipients. This will
                    become the  to-address on the  *envelope;* it is separate
                    from the To, CC, and BCC addresses in the email message.
-:type recipients: ``str``, ``tuple``, or ``list``.
+:type recipients: str, tuple, list
 :param str email: The email message, as a string. It needs to be a complete
                   message with headers and a body.
 :returns: ``None``.
 
-The :func:`send_email` function uses SMTP to send an  :param:`email` message
-to the :param:`recipients` in *batches*. The batching is necessary to
+The :func:`send_email` function uses SMTP to send an ``email`` message
+to the ``recipients``, from the ``sender``, in *batches* of
+:data:`gs.email.core.MAX_BATCH` recipients. The batching is necessary to
 prevent overwhelming the SMTP server (it makes management of the mail queue
-easier).
-'''
+easier).'''
     if not (isinstance(recipients, list) or isinstance(recipients, tuple)):
         recipients = [recipients]
     # TODO: sort
