@@ -21,7 +21,7 @@ Resources
 
 - Code repository: https://github.com/groupserver/gs.email/
 - Documentation:
-  http://groupserver.readthedocs.org/projects/gsemail/
+  http://groupserver.readthedocs.io/projects/gsemail/
 - Questions and comments to
   http://groupserver.org/groups/development/
 - Report bugs at https://redmine.iopen.net/projects/groupserver/
